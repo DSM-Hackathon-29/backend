@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:mysql://${DB_URL:localhost}:3307/${DB_NAME:test}?useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true&tinyInt1isBit=false&rewriteBatchedStatements=true
+    url: jdbc:mysql://114.108.176.85:3307/${DB_NAME:test}?useSSL=false&characterEncoding=UTF-8&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true&tinyInt1isBit=false&rewriteBatchedStatements=true
     username: ${MYSQL_USERNAME:root}
     password: ${MYSQL_PASSWORD:Cjve94uWhd7UWUt}
     driver-class-name: com.mysql.cj.jdbc.Driver
