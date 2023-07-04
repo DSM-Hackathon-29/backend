@@ -24,7 +24,7 @@ data class Institution(
 
 ) {
     @OneToMany(mappedBy = "institution")
-    var suggestionTypeOfInstitutions: MutableList<kr.hs.dsm.backend.domain.institution.persistence.SuggestionTypeOfInstitution> = mutableListOf()
+    var suggestionTypeOfInstitutions: MutableList<SuggestionTypeOfInstitution> = mutableListOf()
 
     @OneToMany(mappedBy = "institution")
     var rangePoints: MutableList<RangePoint> = mutableListOf()
