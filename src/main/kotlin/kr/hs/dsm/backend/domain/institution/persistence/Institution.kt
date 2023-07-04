@@ -33,7 +33,33 @@ data class Institution(
         latitude: BigDecimal,
         longitude: BigDecimal
     ): Boolean {
-        return true
+        return rangePoints
+    }
+
+    fun isPointInPolygon(x: BigDecimal, y: BigDecimal): Boolean {
+        var crosses = 0;  //점과 오른쪽 반직선과 다각형과의 교점 개수
+
+        var j = 0
+        val size = rangePoints.size
+        rangePoints.mapIndexed { idx, rangePoint ->
+            j = idx % size + 1;    // array에 1~N가지 존재
+
+            // tx, ty가  점 i,j 의 Y 좌료 사이에 있는 경우
+
+            if((rangePoint.latitude > y) != (rangePoints[j].latitude > y)) {  // 둘다 크거나, 둘다 작으면 밖에 점
+
+                val atX = (
+                        rangePoints[j].longitude-rangePoint.longitude
+                        ) * (y-rangePoint.latitude) / (rangePoints[j].latitude - rangePoint.latitude) + rangePoint.latitude;
+
+                if(x < atX) crosses++
+            }
+        }
+
+
+
+
+        return (crosses%2 > 0);
     }
 
     fun isContainType(type: SuggestionType) =
