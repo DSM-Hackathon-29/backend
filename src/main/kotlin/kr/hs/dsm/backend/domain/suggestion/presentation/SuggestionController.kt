@@ -162,22 +162,24 @@ class SuggestionController(
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping("/suggestion")
-    fun suggest(@RequestParam request: SuggestRequest) {
+    fun suggest(@RequestBody request: SuggestRequest) {
 
         val suggestion = suggestionRepository.save(
             request.toSuggestion()
         )
 
-        val suggestionOfInstitutions = institutionRepository.findAll()
-            .mapNotNull {
-                if (it.isContainType(suggestion.type) &&
-                    it.isContainPoint(request.latitude, request.longitude))
+        suggestionOfInstitutionRepository.saveAll(
+            institutionRepository.findAll()
+                .mapNotNull {
+                    if (it.isContainType(suggestion.type) &&
+                        it.isContainPoint(request.latitude, request.longitude))
                 {
                     SuggestionOfInstitution(
                         suggestion = suggestion,
                         institution = it
-                    )
-                } else null
-            }
+                        )
+                    } else null
+                }
+        )
     }
 }
