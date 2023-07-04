@@ -10,6 +10,7 @@ import java.io.IOException
 import kr.hs.dsm.backend.domain.image.config.AwsS3Properties
 import kr.hs.dsm.backend.global.error.InternalServerError
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestPart
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -19,7 +20,7 @@ class ImageController(
 ) {
 
     @PostMapping("/image")
-    fun uploadImage(file: File): ImageUrlResponse {
+    fun uploadImage(@RequestPart file: File): ImageUrlResponse {
         inputS3(file, file.name)
         return ImageUrlResponse(
             fileUrl = getResourceUrl(file.name)

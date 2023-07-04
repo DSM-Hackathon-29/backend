@@ -31,6 +31,7 @@ class ExceptionFilter(
                     errorToJson((e.cause as CustomException).errorProperty, response)
                 }
                 else -> {
+                    e.printStackTrace()
                     errorToJson(GlobalErrorCode.INTERNAL_SERVER_ERROR, response)
                 }
             }
