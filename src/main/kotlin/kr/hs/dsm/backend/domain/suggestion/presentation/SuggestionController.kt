@@ -144,7 +144,6 @@ class SuggestionController(
 
     data class SuggestRequest(
         val title: String,
-        val createdAt: LocalDateTime,
         val imageUrl: String?,
         val type: SuggestionType,
         val latitude: BigDecimal,
@@ -153,7 +152,6 @@ class SuggestionController(
     ) {
         fun toSuggestion() = Suggestion(
             title = title,
-            createdAt = createdAt,
             imageUrl = imageUrl,
             type = type,
             latitude = latitude,
