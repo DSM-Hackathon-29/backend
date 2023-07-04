@@ -24,18 +24,30 @@ data class Institution(
 
 ) {
     @OneToMany(mappedBy = "institution")
-    var suggestionTypes: MutableList<SuggestionTypes> = mutableListOf()
+    var suggestionTypeOfInstitutions: MutableList<kr.hs.dsm.backend.domain.institution.persistence.SuggestionTypeOfInstitution> = mutableListOf()
 
     @OneToMany(mappedBy = "institution")
-    var rangePoints: MutableList<RangePoints> = mutableListOf()
+    var rangePoints: MutableList<RangePoint> = mutableListOf()
 
     fun isContainPoint(
         latitude: BigDecimal,
         longitude: BigDecimal
     ): Boolean {
-        return true
+        //crosses: 점 q와 오른쪽 반직선과 다각형과의 교점의 개수
+        val p = rangePoints
+        var crosses = 0
+        for (i in 0 until p.size) {
+            val j = (i + 1) % p.size
+            // 점 B가 선분 (p[i], p[j])의 longitude 좌표 사이에 있음
+            if (p[i].longitude > longitude != p[j].longitude > longitude) {
+                val atLatitude =
+                    (p[j].latitude - p[i].latitude) * (longitude - p[i].longitude) / (p[j].longitude - p[i].longitude) + p[i].latitude
+                if (latitude < atLatitude) crosses++
+            }
+        }
+        return crosses % 2 > 0
     }
 
     fun isContainType(type: SuggestionType) =
-        suggestionTypes.any { it.type == type }
+        suggestionTypeOfInstitutions.any { it.type == type }
 }

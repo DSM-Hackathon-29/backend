@@ -4,11 +4,9 @@ import java.math.BigDecimal
 import kr.hs.dsm.backend.common.util.SecurityUtil
 import kr.hs.dsm.backend.common.dto.TokenResponse
 import kr.hs.dsm.backend.domain.institution.persistence.InstitutionRepository
-import kr.hs.dsm.backend.domain.institution.persistence.RangePoints
+import kr.hs.dsm.backend.domain.institution.persistence.RangePoint
 import kr.hs.dsm.backend.domain.institution.persistence.RangePointsRepository
-import kr.hs.dsm.backend.domain.institution.persistence.SuggestionTypes
-import kr.hs.dsm.backend.domain.institution.persistence.SuggestionTypesRepository
-import kr.hs.dsm.backend.domain.suggestion.enums.SuggestionType
+import kr.hs.dsm.backend.domain.institution.persistence.SuggestionTypeOfInstitutionRepository
 import kr.hs.dsm.backend.global.error.NotFoundException
 import kr.hs.dsm.backend.global.error.PasswordMismatchException
 import kr.hs.dsm.backend.global.security.token.JwtGenerator
@@ -21,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController
 class InstitutionController(
     private val institutionRepository: InstitutionRepository,
     private val rangePointsRepository: RangePointsRepository,
-    private val suggestionTypesRepository: SuggestionTypesRepository,
+    private val suggestionTypeOfInstitutionRepository: SuggestionTypeOfInstitutionRepository,
     private val jwtGenerator: JwtGenerator
 ) {
 
@@ -41,7 +39,7 @@ class InstitutionController(
 
     data class UpdateInstitutionInfoRequest(
         val name: String,
-        val suggestionTypes: List<SuggestionType>,
+        val suggestionType: List<kr.hs.dsm.backend.domain.suggestion.enums.SuggestionType>,
         val rangePoints: List<RangePointRequest>
     ) {
         data class RangePointRequest(
@@ -56,21 +54,21 @@ class InstitutionController(
             institutionName = request.name
         }
         rangePointsRepository.deleteByInstitutionId(institution.id)
-        suggestionTypesRepository.deleteByInstitutionId(institution.id)
+        suggestionTypeOfInstitutionRepository.deleteByInstitutionId(institution.id)
 
         institutionRepository.save(institution)
         rangePointsRepository.saveAll(
             request.rangePoints.map {
-                RangePoints(
+                RangePoint(
                     latitude = it.latitude,
                     longitude = it.longitude,
                     institution = institution
                 )
             }
         )
-        suggestionTypesRepository.saveAll(
-            request.suggestionTypes.map {
-                SuggestionTypes(
+        suggestionTypeOfInstitutionRepository.saveAll(
+            request.suggestionType.map {
+                kr.hs.dsm.backend.domain.institution.persistence.SuggestionTypeOfInstitution(
                     type = it,
                     institution = institution
                 )
