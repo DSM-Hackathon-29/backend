@@ -20,7 +20,10 @@ spring:
 
 secret:
   secret-key: ${SECRET_KEY:asdfghgfds}
-  access-exp: ${ACCESS_EXP:1800}
+  access-exp: ${ACCESS_EXP:1800000}
+
+chatgpt:
+  api-key: ${CHATGPT_API_KEY}
 
 cloud:
   aws:

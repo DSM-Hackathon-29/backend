@@ -3,6 +3,7 @@ package kr.hs.dsm.backend.domain.suggestion.presentation
 import com.querydsl.jpa.impl.JPAQueryFactory
 import java.math.BigDecimal
 import java.time.LocalDateTime
+import kr.hs.dsm.backend.common.event.SuggestionEvent
 import kr.hs.dsm.backend.common.util.SecurityUtil
 import kr.hs.dsm.backend.domain.institution.persistence.InstitutionRepository
 import kr.hs.dsm.backend.domain.suggestion.enums.SuggestionStatus
@@ -13,12 +14,14 @@ import kr.hs.dsm.backend.domain.suggestion.persistence.SuggestionOfInstitutionRe
 import kr.hs.dsm.backend.domain.suggestion.persistence.SuggestionRepository
 import kr.hs.dsm.backend.global.error.InvalidStatusException
 import kr.hs.dsm.backend.global.error.NotFoundException
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
@@ -28,7 +31,7 @@ class SuggestionController(
     private val suggestionRepository: SuggestionRepository,
     private val suggestionOfInstitutionRepository: SuggestionOfInstitutionRepository,
     private val institutionRepository: InstitutionRepository,
-    private val queryFactory: JPAQueryFactory
+    private val eventPublisher: ApplicationEventPublisher
 ) {
 
     @GetMapping("/suggestion")
@@ -173,13 +176,15 @@ class SuggestionController(
                 .mapNotNull {
                     if (it.isContainType(suggestion.type) &&
                         it.isContainPoint(request.latitude, request.longitude))
-                {
-                    SuggestionOfInstitution(
-                        suggestion = suggestion,
-                        institution = it
+                    {
+                        SuggestionOfInstitution(
+                            suggestion = suggestion,
+                            institution = it
                         )
                     } else null
                 }
         )
+
+        eventPublisher.publishEvent(SuggestionEvent(suggestion))
     }
 }

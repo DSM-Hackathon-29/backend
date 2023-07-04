@@ -37,6 +37,8 @@ dependencies {
 
 	implementation("org.springframework.cloud:spring-cloud-starter-aws:2.2.5.RELEASE")
 
+	implementation("io.github.flashvayne:chatgpt-spring-boot-starter:1.0.4")
+
 	implementation("com.querydsl:querydsl-jpa:5.0.0")
 	kapt("com.querydsl:querydsl-apt:5.0.0")
 }

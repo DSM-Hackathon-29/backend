@@ -2,6 +2,7 @@ package kr.hs.dsm.backend.domain.institution.persistence
 
 import java.math.BigDecimal
 import javax.persistence.Entity
+import javax.persistence.FetchType
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
@@ -23,7 +24,7 @@ data class Institution(
     var institutionName: String,
 
 ) {
-    @OneToMany(mappedBy = "institution")
+    @OneToMany(mappedBy = "institution", fetch = FetchType.EAGER)
     var suggestionTypeOfInstitutions: MutableList<SuggestionTypeOfInstitution> = mutableListOf()
 
     @OneToMany(mappedBy = "institution")
