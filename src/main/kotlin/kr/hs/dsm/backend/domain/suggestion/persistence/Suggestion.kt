@@ -6,48 +6,10 @@ import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id
+import javax.persistence.Table
 import kr.hs.dsm.backend.domain.suggestion.enums.SuggestionType
 
-
-/*
-# 건의사항 상세 조회
-
-## Header
-
-### `Authorization`
-
-- **STRING**
-- JWT 액세스 토큰
-- `Bearer b2iidkkdiskejfjv.dsjseilsjdlfe.tokaaweolfskeioswldkeosl`
-
-## Path Param
-
-### `suggestion_id`
-
-- **LONG**
-- 건의사항 id
-- `134`
-
-# Response
-
-## 200 Ok
-
-### Body
-
-```json
-{
-	"id" : 1,
-	"title" : "건의합니다",
-	"created_at" : "2023-07-27'T'12:12:12",
-	"image_url": "https://asldkmsa",
-	"type" : "TRAFFIC",
-	"latitude" : "37.5026432", //위도
-  "longitude" : "37.5026432", //경도
-	"description" : "ㅁㄴ아ㅣㅡㅁ니ㅏ으키ㅏㅡㅋㅋㅊㅌ"
-}
-```
- */
-
+@Table
 @Entity
 class Suggestion(
     @Id

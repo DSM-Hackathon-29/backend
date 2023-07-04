@@ -9,8 +9,10 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
+import javax.persistence.Table
 import kr.hs.dsm.backend.domain.suggestion.enums.SuggestionType
 
+@Table
 @Entity
 class SuggestionTypes(
     @Id

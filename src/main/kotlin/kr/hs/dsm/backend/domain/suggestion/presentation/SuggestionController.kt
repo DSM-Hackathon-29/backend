@@ -32,19 +32,46 @@ class SuggestionController(
 ) {
 
     @GetMapping("/suggestion")
-    fun getSuggestions() {
+    fun getSuggestions(): SuggestionListResponse {
         val institution = SecurityUtil.getCurrentInstitution()
+        val suggestionOfInstitutions = suggestionOfInstitutionRepository.findByInstitutionId(institution.id)
+        val suggestions = suggestionRepository.findAllById(suggestionOfInstitutions.map { it.suggestion!!.id })
+        return SuggestionListResponse(
+            suggestions.map { SuggestionResponse.of(it) }
+        )
+    }
 
-        queryFactory.query().select()
+    data class SuggestionListResponse(
+        val suggestions: List<SuggestionResponse>
+    )
+
+    data class SuggestionResponse(
+        val id: Long,
+        val title: String,
+        val createdAt: LocalDateTime,
+        val imageUrl: String?,
+        val type: SuggestionType
+    ) {
+        companion object {
+            fun of(suggestion: Suggestion) = suggestion.run {
+                SuggestionResponse(
+                    id = id,
+                    title = title,
+                    createdAt = createdAt,
+                    imageUrl = imageUrl,
+                    type = type
+                )
+            }
+        }
     }
 
     @GetMapping("/suggestion/{suggestion-id}")
-    fun getSuggestionDetail(@PathVariable("suggestion-id") suggestionId: Long): SuggestionResponse {
+    fun getSuggestionDetail(@PathVariable("suggestion-id") suggestionId: Long): SuggestionDetailResponse {
         val suggestion = suggestionRepository.findByIdOrNull(suggestionId) ?: throw NotFoundException
-        return SuggestionResponse.of(suggestion)
+        return SuggestionDetailResponse.of(suggestion)
     }
 
-    data class SuggestionResponse(
+    data class SuggestionDetailResponse(
         val id: Long,
         val title: String,
         val createdAt: LocalDateTime,
@@ -56,7 +83,7 @@ class SuggestionController(
     ) {
         companion object {
             fun of(suggestion: Suggestion) = suggestion.run {
-                SuggestionResponse(
+                SuggestionDetailResponse(
                     id = id,
                     title = title,
                     createdAt = createdAt,

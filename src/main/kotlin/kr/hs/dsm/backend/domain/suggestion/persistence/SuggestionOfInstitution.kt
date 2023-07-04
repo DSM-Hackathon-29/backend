@@ -9,10 +9,11 @@ import javax.persistence.Id
 import javax.persistence.IdClass
 import javax.persistence.JoinColumn
 import javax.persistence.ManyToOne
+import javax.persistence.Table
 import kr.hs.dsm.backend.domain.institution.persistence.Institution
 import kr.hs.dsm.backend.domain.suggestion.enums.SuggestionStatus
 
-
+@Table
 @Entity
 @IdClass(SuggestionOfInstitutionId::class)
 class SuggestionOfInstitution(
