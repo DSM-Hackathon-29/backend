@@ -2,6 +2,8 @@ package kr.hs.dsm.backend.domain.suggestion.persistence
 
 import java.math.BigDecimal
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import javax.persistence.Entity
 import javax.persistence.FetchType
 import javax.validation.constraints.Digits;
@@ -36,7 +38,7 @@ class Suggestion(
 
     val imageUrl: String?,
 
-    val createdAt: LocalDateTime = LocalDateTime.now(),
+    val createdAt: LocalDateTime = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime(),
 
     @OneToOne(mappedBy = "suggestion", fetch = FetchType.LAZY)
     var suggestionKeyword: SuggestionKeyword? = null
