@@ -14,7 +14,7 @@ spring:
     properties:
       hibernate:
         format_sql: ${FORMAT_SQL:true}
-        show_sql: ${SHOW_SQL:true}
+        show_sql: ${SHOW_SQL:false}
     database-platform: org.hibernate.dialect.MySQL8Dialect
     open-in-view: false
 
@@ -42,3 +42,7 @@ cloud:
       auto: false
     s3:
       bucket: ${BUCKET_NAME:dsmhackaton}
+
+logging:
+  level:
+    io.github.flashvayne.chatgpt: OFF

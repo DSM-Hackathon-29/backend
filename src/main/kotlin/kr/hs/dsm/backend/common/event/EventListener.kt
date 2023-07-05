@@ -34,8 +34,6 @@ class EventTestListener(
         val suggestion = event.suggestion
         if (!map.contains(suggestion.id)) map.add(suggestion.id) else return
 
-        if (suggestionKeywordRepository.existsBySuggestionId(suggestion.id)) return
-
         val request = "'${suggestion.description}'라는 건의를 듣고 개선해야하는 물리적인 요소를 하나의 키워드로 요약해줘."
         val response = chatgptService.sendMessage(request)
 

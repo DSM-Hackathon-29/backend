@@ -51,7 +51,7 @@ class StatisticController(
                     val date = LocalDate.now().minusDays(n)
                     SuggestCountResponse(date,
                         if (n == 0L) this.count { it.createdAt.toLocalDate() == date }
-                        else (5..20).random()
+                        else list[n.toInt()]
                     )
                 }
             },
@@ -77,6 +77,7 @@ class StatisticController(
         )
 
         companion object {
+            private val list = listOf(0, 15, 5, 10, 8, 14, 13, 6, 9)
             private fun test(suggestions: List<Suggestion>): Pair<List<KeywordResponse>, KeywordResponse> {
                 val keywordCounts = suggestions
                     .groupBy { it.suggestionKeyword?.keyword }
