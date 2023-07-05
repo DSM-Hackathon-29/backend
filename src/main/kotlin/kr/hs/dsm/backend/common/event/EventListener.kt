@@ -5,6 +5,7 @@ import kr.hs.dsm.backend.domain.statistic.persistence.Keyword
 import kr.hs.dsm.backend.domain.statistic.persistence.KeywordRepository
 import kr.hs.dsm.backend.domain.statistic.persistence.SuggestionKeyword
 import kr.hs.dsm.backend.domain.statistic.persistence.SuggestionKeywordRepository
+import org.springframework.context.ApplicationListener
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
@@ -14,26 +15,26 @@ import org.springframework.transaction.event.TransactionPhase
 import org.springframework.transaction.event.TransactionalEventListener
 
 @Component
-class EventListener(
+class EventTestListener(
     private val chatgptService: ChatgptService,
     private val keywordRepository: KeywordRepository,
     private val suggestionKeywordRepository: SuggestionKeywordRepository
-) {
+) : ApplicationListener<SuggestionEvent> {
 
-
+    @Async
     @EventListener
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    @Async
-    fun onSuggestionEvent(event: SuggestionEvent) {
-        println("EventListener.onSuggestionEvent")
-        println(event.suggestion)
+    override fun onApplicationEvent(event: SuggestionEvent) {
         val suggestion = event.suggestion
-        val word = chatgptService.sendMessage("'" + event.suggestion.description + "'의 핵심 단어 하나만 말해줄래?")
-        println("word = $word")
+        val request = "'${suggestion.description}'라는 건의를 듣고 개선해야하는 물리적인 요소를 하나의 키워드로 요약해줘."
+        val response = chatgptService.sendMessage(request)
 
+        println("$request -> ${response.trim()}")
+
+        val word = response.trim().split(" ")[0].trim()
         val keyword = keywordRepository.findByWord(word) ?:
-            keywordRepository.save(Keyword(word = word))
+        keywordRepository.save(Keyword(word = word))
 
         suggestionKeywordRepository.save(
             SuggestionKeyword(

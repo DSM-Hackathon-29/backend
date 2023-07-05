@@ -29,6 +29,7 @@ dependencies {
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
 	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("io.jsonwebtoken:jjwt:0.9.1")
 
@@ -40,7 +41,8 @@ dependencies {
 	implementation("io.github.flashvayne:chatgpt-spring-boot-starter:1.0.4")
 
 	implementation("com.querydsl:querydsl-jpa:5.0.0")
-	kapt("com.querydsl:querydsl-apt:5.0.0")
+	kapt("com.querydsl:querydsl-apt:5.0.0:jpa")
+	kapt("org.springframework.boot:spring-boot-configuration-processor")
 }
 
 allOpen {

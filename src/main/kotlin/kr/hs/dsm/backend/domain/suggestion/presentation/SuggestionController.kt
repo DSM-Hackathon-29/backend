@@ -8,6 +8,8 @@ import kr.hs.dsm.backend.common.util.SecurityUtil
 import kr.hs.dsm.backend.domain.institution.persistence.InstitutionRepository
 import kr.hs.dsm.backend.domain.suggestion.enums.SuggestionStatus
 import kr.hs.dsm.backend.domain.suggestion.enums.SuggestionType
+import kr.hs.dsm.backend.domain.suggestion.persistence.QSuggestion.suggestion
+import kr.hs.dsm.backend.domain.suggestion.persistence.QSuggestionOfInstitution.suggestionOfInstitution
 import kr.hs.dsm.backend.domain.suggestion.persistence.Suggestion
 import kr.hs.dsm.backend.domain.suggestion.persistence.SuggestionOfInstitution
 import kr.hs.dsm.backend.domain.suggestion.persistence.SuggestionOfInstitutionRepository
@@ -32,15 +34,23 @@ class SuggestionController(
     private val suggestionRepository: SuggestionRepository,
     private val suggestionOfInstitutionRepository: SuggestionOfInstitutionRepository,
     private val institutionRepository: InstitutionRepository,
-    private val eventPublisher: ApplicationEventPublisher
+    private val eventPublisher: ApplicationEventPublisher,
+    private val queryFactory: JPAQueryFactory
 ) {
 
     @Transactional
     @GetMapping("/suggestion")
-    fun getSuggestions(): SuggestionListResponse {
+    fun getSuggestions(@RequestParam status: SuggestionStatus?): SuggestionListResponse {
         val institution = SecurityUtil.getCurrentInstitution()
-        val suggestionOfInstitutions = suggestionOfInstitutionRepository.findByInstitutionId(institution.id)
-        val suggestions = suggestionRepository.findAllById(suggestionOfInstitutions.map { it.suggestion!!.id })
+        val suggestions = queryFactory.query()
+            .select(suggestion)
+            .from(suggestion)
+            .innerJoin(suggestionOfInstitution).on(
+                suggestionOfInstitution.institution.id.eq(institution.id)
+                    .and(status?.let { suggestionOfInstitution.status.eq(status) })
+            )
+            .fetch()
+
         return SuggestionListResponse(
             suggestions.map { SuggestionResponse.of(it) }
         )
