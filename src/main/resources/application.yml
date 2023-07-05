@@ -18,6 +18,11 @@ spring:
     database-platform: org.hibernate.dialect.MySQL8Dialect
     open-in-view: false
 
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
 secret:
   secret-key: ${SECRET_KEY:asdfghgfds}
   access-exp: ${ACCESS_EXP:1800000}
@@ -36,4 +41,4 @@ cloud:
     stack:
       auto: false
     s3:
-      bucket: ${BUCKET_NAME:dms-terraform-state}
+      bucket: ${BUCKET_NAME:dsmhackaton}
