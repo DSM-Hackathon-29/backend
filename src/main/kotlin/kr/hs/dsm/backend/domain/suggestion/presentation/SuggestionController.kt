@@ -44,6 +44,7 @@ class SuggestionController(
         val institution = SecurityUtil.getCurrentInstitution()
         val suggestions = queryFactory.query()
             .select(suggestion)
+            .distinct()
             .from(suggestion)
             .innerJoin(suggestionOfInstitution).on(
                 suggestionOfInstitution.institution.id.eq(institution.id)
