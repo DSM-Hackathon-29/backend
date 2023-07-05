@@ -19,7 +19,7 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle
 
       - name: Build with Gradle
-        run: ./gradlew clean build --stacktrace
+        run: ./gradlew clean build --stacktrace --scan --debug
 
       - name: Login to Dockerhub
         uses: docker/login-action@v1
