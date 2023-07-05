@@ -48,8 +48,6 @@ class SuggestionController(
         } ?: suggestionOfInstitutionRepository.findByInstitutionId(institution.id)
         val suggestions = suggestionRepository.findAllById(suggestionOfInstitutions.map { it.suggestion!!.id })
 
-        println(suggestions.map { it.title })
-
         return SuggestionListResponse(
             suggestions.map { SuggestionResponse.of(it) }
         )

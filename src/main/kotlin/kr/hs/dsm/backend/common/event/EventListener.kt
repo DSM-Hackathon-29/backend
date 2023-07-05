@@ -5,6 +5,7 @@ import kr.hs.dsm.backend.domain.statistic.persistence.Keyword
 import kr.hs.dsm.backend.domain.statistic.persistence.KeywordRepository
 import kr.hs.dsm.backend.domain.statistic.persistence.SuggestionKeyword
 import kr.hs.dsm.backend.domain.statistic.persistence.SuggestionKeywordRepository
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.context.ApplicationListener
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
@@ -28,7 +29,7 @@ class EventTestListener(
     override fun onApplicationEvent(event: SuggestionEvent) {
         val suggestion = event.suggestion
         val request = "'${suggestion.description}'라는 건의를 듣고 개선해야하는 물리적인 요소를 하나의 키워드로 요약해줘."
-        val response = listOf("경사로", "시설", "보도블럭", "가로등", "쓰레기", "건물", "버스").random() // chatgptService.sendMessage(request)
+        val response = chatgptService.sendMessage(request)
 
         println("$request -> ${response.trim()}")
 
