@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jre-focal
+FROM openjdk:11
 
 EXPOSE 8080
 
