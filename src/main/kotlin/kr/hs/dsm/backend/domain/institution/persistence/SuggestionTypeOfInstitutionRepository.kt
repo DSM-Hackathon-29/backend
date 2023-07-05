@@ -4,4 +4,5 @@ import org.springframework.data.repository.CrudRepository
 
 interface SuggestionTypeOfInstitutionRepository : CrudRepository<SuggestionTypeOfInstitution, Long> {
     fun deleteByInstitutionId(institutionId: Long)
+    fun findByInstitutionId(institutionId: Long): List<SuggestionTypeOfInstitution>
 }

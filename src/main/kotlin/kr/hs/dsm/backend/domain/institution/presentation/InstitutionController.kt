@@ -12,6 +12,7 @@ import kr.hs.dsm.backend.global.error.NotFoundException
 import kr.hs.dsm.backend.global.error.PasswordMismatchException
 import kr.hs.dsm.backend.global.security.token.JwtGenerator
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -77,6 +78,31 @@ class InstitutionController(
                     institution = institution
                 )
             }
+        )
+    }
+
+    data class GetInstitutionInfoResponse(
+        val name: String,
+        val rangePoints: List<RangePointResponse>
+    ) {
+        data class RangePointResponse(
+            val latitude: BigDecimal,
+            val longitude: BigDecimal
+        )
+    }
+
+    @Transactional(readOnly = true)
+    @GetMapping("/institution")
+    fun getInstitutionInfo(): GetInstitutionInfoResponse {
+        val institution = SecurityUtil.getCurrentInstitution()
+        val rangePoints = rangePointsRepository.findByInstitutionId(institution.id)
+
+        return GetInstitutionInfoResponse(
+            name = institution.institutionName,
+            rangePoints = rangePoints.map { GetInstitutionInfoResponse.RangePointResponse(
+                latitude = it.latitude,
+                longitude = it.longitude
+            ) }
         )
     }
 }

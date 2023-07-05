@@ -37,6 +37,7 @@ class SecurityConfig(
             .antMatchers(HttpMethod.POST, "/suggestion").permitAll()
             .antMatchers(HttpMethod.POST, "/image").permitAll()
             .antMatchers(HttpMethod.PATCH, "/institution").authenticated()
+            .antMatchers(HttpMethod.GET, "/institution").authenticated()
             .antMatchers(HttpMethod.GET, "/statistic").authenticated()
             .anyRequest().denyAll()
 

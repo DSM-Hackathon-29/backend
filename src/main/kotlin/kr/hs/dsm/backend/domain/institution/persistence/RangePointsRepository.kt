@@ -4,4 +4,5 @@ import org.springframework.data.repository.CrudRepository
 
 interface RangePointsRepository : CrudRepository<RangePoint, Long> {
     fun deleteByInstitutionId(institutionId: Long)
+    fun findByInstitutionId(institutionId: Long): List<RangePoint>
 }
