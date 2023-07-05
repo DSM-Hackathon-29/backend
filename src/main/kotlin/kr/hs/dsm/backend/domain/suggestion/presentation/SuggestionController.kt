@@ -42,15 +42,13 @@ class SuggestionController(
     @GetMapping("/suggestion")
     fun getSuggestions(@RequestParam status: SuggestionStatus?): SuggestionListResponse {
         val institution = SecurityUtil.getCurrentInstitution()
-        val suggestions = queryFactory.query()
-            .select(suggestion)
-            .distinct()
-            .from(suggestion)
-            .innerJoin(suggestionOfInstitution).on(
-                suggestionOfInstitution.institution.id.eq(institution.id)
-                    .and(status?.let { suggestionOfInstitution.status.eq(status) })
-            )
-            .fetch()
+
+        val suggestionOfInstitutions = status?.let {
+            suggestionOfInstitutionRepository.findByInstitutionIdAndStatus(institution.id, status)
+        } ?: suggestionOfInstitutionRepository.findByInstitutionId(institution.id)
+        val suggestions = suggestionRepository.findAllById(suggestionOfInstitutions.map { it.suggestion!!.id })
+
+        println(suggestions.map { it.title })
 
         return SuggestionListResponse(
             suggestions.map { SuggestionResponse.of(it) }
