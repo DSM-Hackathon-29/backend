@@ -33,10 +33,11 @@ class SecurityConfig(
             .antMatchers(HttpMethod.GET, "/suggestion/{suggestion-id}").authenticated()
             .antMatchers(HttpMethod.POST, "/suggestion/register/{suggestion-id}").authenticated()
             .antMatchers(HttpMethod.POST, "/suggestion/solve/{suggestion-id}").authenticated()
-            .antMatchers(HttpMethod.DELETE, "/suggestion").authenticated()
+            .antMatchers(HttpMethod.DELETE, "/suggestion/{suggestion-id}").authenticated()
             .antMatchers(HttpMethod.POST, "/suggestion").permitAll()
             .antMatchers(HttpMethod.POST, "/image").permitAll()
             .antMatchers(HttpMethod.PATCH, "/institution").authenticated()
+            .antMatchers(HttpMethod.GET, "/statistic").authenticated()
             .anyRequest().denyAll()
 
         http
