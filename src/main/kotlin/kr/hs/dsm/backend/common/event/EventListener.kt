@@ -1,6 +1,8 @@
 package kr.hs.dsm.backend.common.event
 
 import io.github.flashvayne.chatgpt.service.ChatgptService
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentSkipListSet
 import kr.hs.dsm.backend.domain.statistic.persistence.Keyword
 import kr.hs.dsm.backend.domain.statistic.persistence.KeywordRepository
 import kr.hs.dsm.backend.domain.statistic.persistence.SuggestionKeyword
@@ -22,13 +24,16 @@ class EventTestListener(
     private val suggestionKeywordRepository: SuggestionKeywordRepository
 ) : ApplicationListener<SuggestionEvent> {
 
+    private val map = ConcurrentSkipListSet<Long>()
+
     @Async
     @EventListener
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     override fun onApplicationEvent(event: SuggestionEvent) {
-        println("EventTestListener.onApplicationEvent")
         val suggestion = event.suggestion
+        if (!map.contains(suggestion.id)) map.add(suggestion.id) else return
+
         if (suggestionKeywordRepository.existsBySuggestionId(suggestion.id)) return
 
         val request = "'${suggestion.description}'라는 건의를 듣고 개선해야하는 물리적인 요소를 하나의 키워드로 요약해줘."
