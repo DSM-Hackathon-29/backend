@@ -27,6 +27,7 @@ class EventTestListener(
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     override fun onApplicationEvent(event: SuggestionEvent) {
+        println("EventTestListener.onApplicationEvent")
         val suggestion = event.suggestion
         if (suggestionKeywordRepository.existsBySuggestionId(suggestion.id)) return
 
