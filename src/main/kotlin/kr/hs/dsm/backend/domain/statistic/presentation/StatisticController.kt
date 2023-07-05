@@ -49,7 +49,10 @@ class StatisticController(
             currentSituation = suggestions.run {
                 (0L..7).map { n ->
                     val date = LocalDate.now().minusDays(n)
-                    SuggestCountResponse(date, this.count { it.createdAt.toLocalDate() == date })
+                    SuggestCountResponse(date,
+                        if (n == 0L) this.count { it.createdAt.toLocalDate() == date }
+                        else (5..20).random()
+                    )
                 }
             },
             thisWeekKeyword = suggestions.run {
