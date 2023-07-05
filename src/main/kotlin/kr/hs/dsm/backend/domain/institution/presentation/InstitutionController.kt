@@ -7,9 +7,11 @@ import kr.hs.dsm.backend.domain.institution.persistence.InstitutionRepository
 import kr.hs.dsm.backend.domain.institution.persistence.RangePoint
 import kr.hs.dsm.backend.domain.institution.persistence.RangePointsRepository
 import kr.hs.dsm.backend.domain.institution.persistence.SuggestionTypeOfInstitutionRepository
+import kr.hs.dsm.backend.domain.suggestion.enums.SuggestionType
 import kr.hs.dsm.backend.global.error.NotFoundException
 import kr.hs.dsm.backend.global.error.PasswordMismatchException
 import kr.hs.dsm.backend.global.security.token.JwtGenerator
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -28,6 +30,7 @@ class InstitutionController(
         val password: String
     )
 
+    @Transactional
     @PostMapping("/auth/tokens")
     fun login(@RequestBody request: LoginRequest): TokenResponse {
         val institution = institutionRepository.findByAccountId(request.accountId) ?: throw NotFoundException
@@ -39,7 +42,7 @@ class InstitutionController(
 
     data class UpdateInstitutionInfoRequest(
         val name: String,
-        val suggestionType: List<kr.hs.dsm.backend.domain.suggestion.enums.SuggestionType>,
+        val suggestionType: List<SuggestionType>,
         val rangePoints: List<RangePointRequest>
     ) {
         data class RangePointRequest(
@@ -48,6 +51,7 @@ class InstitutionController(
         )
     }
 
+    @Transactional
     @PatchMapping("/institution")
     fun updateInstitutionInfo(@RequestBody request: UpdateInstitutionInfoRequest) {
         val institution = SecurityUtil.getCurrentInstitution().apply {

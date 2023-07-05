@@ -17,6 +17,7 @@ import kr.hs.dsm.backend.global.error.NotFoundException
 import org.springframework.context.ApplicationEventPublisher
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.http.HttpStatus
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -34,6 +35,7 @@ class SuggestionController(
     private val eventPublisher: ApplicationEventPublisher
 ) {
 
+    @Transactional
     @GetMapping("/suggestion")
     fun getSuggestions(): SuggestionListResponse {
         val institution = SecurityUtil.getCurrentInstitution()
@@ -68,6 +70,7 @@ class SuggestionController(
         }
     }
 
+    @Transactional
     @GetMapping("/suggestion/{suggestion-id}")
     fun getSuggestionDetail(@PathVariable("suggestion-id") suggestionId: Long): SuggestionDetailResponse {
         val suggestion = suggestionRepository.findByIdOrNull(suggestionId) ?: throw NotFoundException
@@ -100,6 +103,7 @@ class SuggestionController(
         }
     }
 
+    @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping("/suggestion/register/{suggestion-id}")
     fun register(@PathVariable("suggestion-id") suggestionId: Long) {
@@ -117,6 +121,7 @@ class SuggestionController(
         suggestionOfInstitutionRepository.save(suggestionOfInstitution)
     }
 
+    @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping("/suggestion/solve/{suggestion-id}")
     fun solve(@PathVariable("suggestion-id") suggestionId: Long) {
@@ -134,6 +139,7 @@ class SuggestionController(
         suggestionOfInstitutionRepository.save(suggestionOfInstitution)
     }
 
+    @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/suggestion/{suggestion-id}")
     fun delete(@PathVariable("suggestion-id") suggestionId: Long) {
@@ -163,6 +169,7 @@ class SuggestionController(
         )
     }
 
+    @Transactional
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PostMapping("/suggestion")
     fun suggest(@RequestBody request: SuggestRequest) {
