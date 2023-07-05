@@ -44,7 +44,7 @@ class StatisticController(
             val name: String,
             val count: Int
         )
-/*
+
         constructor(suggestions: List<Suggestion>): this(
             currentSituation = suggestions.run {
                 (0L..7).map { n ->
@@ -58,36 +58,43 @@ class StatisticController(
                     .groupBy { it.suggestionKeyword?.keyword }
                     .map { it.key to it.value.count() }
                     .sortedBy { -it.second }
-                (0..5).map { rowNum ->
+                (0..5).mapNotNull { rowNum ->
+                    if (keywordCounts.size <= rowNum) return@mapNotNull null
                     KeywordResponse(
                         rank = rowNum + 1,
                         name = keywordCounts[rowNum].first!!.word,
-                        keywordCounts[rowNum].second
+                        count = keywordCounts[rowNum].second
                     )
                 }
             },
-            keyword = suggestions.run {
+            keyword = test(suggestions).first,
+            relatedSuggestions = suggestions
+                .filter { it.suggestionKeyword!!.keyword.word == test(suggestions).second.name }
+                .map { SuggestionResponse.of(it) }
+        )
+
+        companion object {
+            private fun test(suggestions: List<Suggestion>): Pair<List<KeywordResponse>, KeywordResponse> {
                 val keywordCounts = suggestions
                     .groupBy { it.suggestionKeyword?.keyword }
                     .map { it.key to it.value.count() }
                     .sortedBy { -it.second }
-                (0..5).map { rowNum ->
+                val ranks = (0..5).mapNotNull { rowNum ->
+                    if (keywordCounts.size <= rowNum) return@mapNotNull null
                     KeywordResponse(
                         rank = rowNum + 1,
                         name = keywordCounts[rowNum].first!!.word,
                         keywordCounts[rowNum].second
                     )
                 }
-            },
-            relatedSuggestions = listOf()
-        )
-
- */
+                return ranks to ranks[0]
+            }
+        }
     }
 
     @Transactional
     @GetMapping("/statistic")
-    fun getStatistic() {
+    fun getStatistic(): GetStatisticResponse {
         val institution = SecurityUtil.getCurrentInstitution()
         val suggestions = queryFactory.query()
             .select(suggestion)
@@ -99,5 +106,6 @@ class StatisticController(
             .innerJoin(keyword).on(keyword.id.eq(suggestionKeyword.keyword.id)).fetchJoin()
             .fetch()
 
+        return GetStatisticResponse(suggestions)
     }
 }
