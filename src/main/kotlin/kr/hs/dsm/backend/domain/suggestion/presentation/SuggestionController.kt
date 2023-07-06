@@ -53,7 +53,7 @@ class SuggestionController(
         val suggestions = queryFactory.query()
             .select(suggestion)
             .from(suggestion)
-            .innerJoin(suggestionKeyword).on(suggestion.id.eq(suggestionKeyword.id)).fetchJoin()
+            .innerJoin(suggestionKeyword).on(suggestion.id.eq(suggestionKeyword.suggestion.id)).fetchJoin()
             .innerJoin(keyword).on(keyword.id.eq(suggestionKeyword.keyword.id)).fetchJoin()
             .where(suggestion.id.`in`(suggestionOfInstitutions.map { it.suggestion!!.id }))
             .fetch()
