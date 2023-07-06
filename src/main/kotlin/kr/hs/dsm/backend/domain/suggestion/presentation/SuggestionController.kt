@@ -6,6 +6,10 @@ import java.time.LocalDateTime
 import kr.hs.dsm.backend.common.event.SuggestionEvent
 import kr.hs.dsm.backend.common.util.SecurityUtil
 import kr.hs.dsm.backend.domain.institution.persistence.InstitutionRepository
+import kr.hs.dsm.backend.domain.statistic.persistence.QKeyword
+import kr.hs.dsm.backend.domain.statistic.persistence.QKeyword.keyword
+import kr.hs.dsm.backend.domain.statistic.persistence.QSuggestionKeyword
+import kr.hs.dsm.backend.domain.statistic.persistence.QSuggestionKeyword.suggestionKeyword
 import kr.hs.dsm.backend.domain.suggestion.enums.SuggestionStatus
 import kr.hs.dsm.backend.domain.suggestion.enums.SuggestionType
 import kr.hs.dsm.backend.domain.suggestion.persistence.QSuggestion.suggestion
@@ -46,7 +50,13 @@ class SuggestionController(
         val suggestionOfInstitutions = status?.let {
             suggestionOfInstitutionRepository.findByInstitutionIdAndStatus(institution.id, status)
         } ?: suggestionOfInstitutionRepository.findByInstitutionId(institution.id)
-        val suggestions = suggestionRepository.findAllById(suggestionOfInstitutions.map { it.suggestion!!.id })
+        val suggestions = queryFactory.query()
+            .select(suggestion)
+            .from(suggestion)
+            .innerJoin(suggestionKeyword).on(suggestion.id.eq(suggestionKeyword.id)).fetchJoin()
+            .innerJoin(keyword).on(keyword.id.eq(suggestionKeyword.keyword.id)).fetchJoin()
+            .where(suggestion.id.`in`(suggestionOfInstitutions.map { it.suggestion!!.id }))
+            .fetch()
 
         return SuggestionListResponse(
             suggestions.map { SuggestionResponse.of(it) }
@@ -62,6 +72,7 @@ class SuggestionController(
         val title: String,
         val createdAt: LocalDateTime,
         val imageUrl: String?,
+        val keyword: String,
         val type: SuggestionType
     ) {
         companion object {
@@ -71,6 +82,7 @@ class SuggestionController(
                     title = title,
                     createdAt = createdAt,
                     imageUrl = imageUrl,
+                    keyword = suggestion.suggestionKeyword!!.keyword.word,
                     type = type
                 )
             }
@@ -90,6 +102,7 @@ class SuggestionController(
         val createdAt: LocalDateTime,
         val imageUrl: String?,
         val type: SuggestionType,
+        val keyword: String,
         val latitude: BigDecimal,
         val longitude: BigDecimal,
         val description: String
@@ -104,6 +117,7 @@ class SuggestionController(
                     type = type,
                     latitude = latitude,
                     longitude = longitude,
+                    keyword = suggestionKeyword!!.keyword.word,
                     description = description
                 )
             }
