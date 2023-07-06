@@ -42,22 +42,25 @@ class StatisticController(
         class KeywordResponse(
             val rank: Int,
             val name: String,
-            val count: Int
+            val count: Int,
+            val percent: Double
         )
 
         constructor(suggestions: List<Suggestion>): this(
             currentSituation = suggestions.run {
                 (0L..7).map { n ->
                     val date = LocalDate.now().minusDays(n)
-                    SuggestCountResponse(date,
-                        if (n == 0L) this.count { it.createdAt.toLocalDate() == date }
-                        else list[n.toInt()]
+                    SuggestCountResponse(
+                        date = date,
+                        count = if (n == 0L) this.count { it.createdAt.toLocalDate() == date }
+                        else list[n.toInt()],
                     )
                 }
             },
             thisWeekKeyword = suggestions.run {
-                val keywordCounts = suggestions
+                val thisWeekSuggestions = suggestions
                     .filter { it.createdAt.toLocalDate().isAfter(LocalDate.now().minusDays(7)) }
+                val keywordCounts = thisWeekSuggestions
                     .groupBy { it.suggestionKeyword?.keyword }
                     .map { it.key to it.value.count() }
                     .sortedBy { -it.second }
@@ -66,7 +69,8 @@ class StatisticController(
                     KeywordResponse(
                         rank = rowNum + 1,
                         name = keywordCounts[rowNum].first!!.word,
-                        count = keywordCounts[rowNum].second
+                        count = keywordCounts[rowNum].second,
+                        percent = keywordCounts[rowNum].second / thisWeekSuggestions.size.toDouble()
                     )
                 }
             },
@@ -88,7 +92,8 @@ class StatisticController(
                     KeywordResponse(
                         rank = rowNum + 1,
                         name = keywordCounts[rowNum].first!!.word,
-                        keywordCounts[rowNum].second
+                        count = keywordCounts[rowNum].second,
+                        percent = keywordCounts[rowNum].second / suggestions.size.toDouble()
                     )
                 }
                 return ranks to ranks[0]
