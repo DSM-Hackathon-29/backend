@@ -39,7 +39,12 @@ class EventTestListener(
 
         println("$request -> ${response.replace("\"", "").trim()}")
 
-        val word = response.replace("\"", "").replace("'", "").trim().split(" ")[0].trim()
+        val word = response
+            .replace("\"", "")
+            .replace("'", "")
+            .replace(".", "")
+            .trim().split(" ")[0].trim()
+        
         val keyword = keywordRepository.findByWord(word) ?: keywordRepository.save(Keyword(word = word))
 
         suggestionKeywordRepository.save(
