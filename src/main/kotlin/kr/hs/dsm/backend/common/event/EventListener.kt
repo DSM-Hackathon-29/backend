@@ -37,9 +37,9 @@ class EventTestListener(
         val request = "'${suggestion.description}'라는 건의를 듣고 개선해야하는 물리적인 요소를 하나의 키워드로 요약해줘."
         val response = chatgptService.sendMessage(request)
 
-        println("$request -> ${response.trim()}")
+        println("$request -> ${response.replace("\"", "").trim()}")
 
-        val word = response.trim().split(" ")[0].trim()
+        val word = response.replace("\"", "").replace("'", "").trim().split(" ")[0].trim()
         val keyword = keywordRepository.findByWord(word) ?: keywordRepository.save(Keyword(word = word))
 
         suggestionKeywordRepository.save(
